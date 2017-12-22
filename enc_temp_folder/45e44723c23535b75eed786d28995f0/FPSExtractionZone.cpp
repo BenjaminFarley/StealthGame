@@ -1,10 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FPSExtractionZone.h"
-#include "FPSCharacter.h"
-#include "FPSGameMode.h"
 #include "Components/BoxComponent.h"
-#include "Components/DecalComponent.h"
+#include "FPSCharacter.h"
 
 // Sets default values
 AFPSExtractionZone::AFPSExtractionZone()
@@ -23,9 +21,7 @@ AFPSExtractionZone::AFPSExtractionZone()
     
     OverlapComp->OnComponentBeginOverlap.AddDynamic(this, &AFPSExtractionZone::HandleOverlap);
 
-	DecalComp = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComp"));
-	DecalComp->DecalSize = FVector(200.0f, 200.0f, 200.0f);
-	DecalComp->AttachTo(RootComponent);
+	//DecalComp = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComp"));
 	
 
 }
@@ -37,14 +33,9 @@ void AFPSExtractionZone::HandleOverlap(UPrimitiveComponent* OverlappedComponent,
     UE_LOG(LogTemp, Log, TEXT("Handling Overlap")); 
     
     AFPSCharacter* MyCharacter = Cast<AFPSCharacter>(OtherActor);
-    if (MyCharacter && MyCharacter->bIsCarryingObjective)
+    if (MyCharacter && MyCharacter->bIsCarryingObjective == true)
     {
         UE_LOG(LogTemp, Log, TEXT("Overlapping Character has the objective"));
-		AFPSGameMode* GM = Cast<AFPSGameMode>(GetWorld()->GetAuthGameMode());
-		if (GM)
-		{
-			GM->CompleteMission(MyCharacter);
-		}
     }
 
 }
