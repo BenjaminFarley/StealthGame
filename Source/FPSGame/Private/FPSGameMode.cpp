@@ -4,6 +4,7 @@
 #include "FPSHUD.h"
 #include "FPSCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 AFPSGameMode::AFPSGameMode()
 {
@@ -20,7 +21,36 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn)
 	if (InstigatorPawn)
 	{
 		InstigatorPawn->DisableInput(nullptr);
+		
+		if (SpectatingViewportClass)
+		{
+
+
+			TArray<AActor*> ReturnedActors;
+			UGameplayStatics::GetAllActorsOfClass(this, SpectatingViewportClass, ReturnedActors);
+
+			// Change view target to the first valid actor that is found
+			if (ReturnedActors.Num() > 0)
+			{
+				AActor* NewViewTarget = ReturnedActors[0];
+
+				APlayerController* PawnController = Cast<APlayerController>(InstigatorPawn->GetController());
+				if (PawnController)
+				{
+					PawnController->SetViewTargetWithBlend(NewViewTarget, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
+				}
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("SpectatingViewportClass is not set! Please update the GameMode class with a valid subclass."))
+		}
+
+		
 	}
 
 	OnMissionCompleted(InstigatorPawn);
+
+	
+
 }

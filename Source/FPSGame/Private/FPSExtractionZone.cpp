@@ -27,8 +27,7 @@ AFPSExtractionZone::AFPSExtractionZone()
 
 	DecalComp = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComp"));
 	DecalComp->DecalSize = FVector(200.0f, 200.0f, 200.0f);
-	DecalComp->AttachTo(RootComponent);
-	
+	DecalComp->SetupAttachment(RootComponent);
 
 }
 
