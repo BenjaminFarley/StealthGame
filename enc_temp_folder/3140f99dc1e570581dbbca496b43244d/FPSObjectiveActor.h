@@ -35,10 +35,6 @@ protected:
     // On Overlap, play particle effects
     void PlayEffects();
 
-	// On Overlap, play sound effect
-	UPROPERTY(EditDefaultsOnly, Category = "Effects")
-	USoundBase* PickupSound;
-
 public:
     virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 	

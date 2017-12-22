@@ -3,8 +3,10 @@
 #include "FPSExtractionZone.h"
 #include "FPSCharacter.h"
 #include "FPSGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
 #include "Components/DecalComponent.h"
+#include "Sound/SoundBase.h"
 
 // Sets default values
 AFPSExtractionZone::AFPSExtractionZone()
@@ -37,14 +39,22 @@ void AFPSExtractionZone::HandleOverlap(UPrimitiveComponent* OverlappedComponent,
     UE_LOG(LogTemp, Log, TEXT("Handling Overlap")); 
     
     AFPSCharacter* MyCharacter = Cast<AFPSCharacter>(OtherActor);
-    if (MyCharacter && MyCharacter->bIsCarryingObjective)
-    {
-        UE_LOG(LogTemp, Log, TEXT("Overlapping Character has the objective"));
+	if (MyCharacter == nullptr)
+	{
+		return;
+	}
+
+	if (MyCharacter->bIsCarryingObjective)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Overlapping Character has the objective"));
 		AFPSGameMode* GM = Cast<AFPSGameMode>(GetWorld()->GetAuthGameMode());
 		if (GM)
 		{
 			GM->CompleteMission(MyCharacter);
 		}
-    }
-
+	}
+	else
+	{
+		UGameplayStatics::PlaySound2D(this, ObjectiveMissingSound);
+	}
 }
