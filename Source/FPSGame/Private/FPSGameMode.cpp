@@ -16,7 +16,7 @@ AFPSGameMode::AFPSGameMode()
 	HUDClass = AFPSHUD::StaticClass();
 }
 
-void AFPSGameMode::CompleteMission(APawn* InstigatorPawn)
+void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 {
 	if (InstigatorPawn)
 	{
@@ -24,7 +24,6 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn)
 		
 		if (SpectatingViewportClass)
 		{
-
 
 			TArray<AActor*> ReturnedActors;
 			UGameplayStatics::GetAllActorsOfClass(this, SpectatingViewportClass, ReturnedActors);
@@ -49,7 +48,7 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn)
 		
 	}
 
-	OnMissionCompleted(InstigatorPawn);
+	OnMissionCompleted(InstigatorPawn, bMissionSuccess);
 
 	
 

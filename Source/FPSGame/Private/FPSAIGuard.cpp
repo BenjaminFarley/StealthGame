@@ -1,8 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FPSAIGuard.h"
+#include "FPSGameMode.h"
 #include "Perception/PawnSensingComponent.h"
 #include "DrawDebugHelpers.h"
+#include "TimerManager.h"
 
 
 // Sets default values
@@ -40,6 +42,14 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 		return;
 	}
 	DrawDebugSphere(GetWorld(), SeenPawn->GetActorLocation(), 32.0f, 12.0f, FColor::Red, false, 10.0f);
+
+	// If we have been spotted, fail the mission
+	AFPSGameMode* GM = Cast<AFPSGameMode>(GetWorld()->GetAuthGameMode());
+	if (GM)
+	{
+		GM->CompleteMission(SeenPawn, false);
+	}
+
 }
 
 void AFPSAIGuard::OnHearingNoise(APawn* NoiseInstigator, const FVector& Location, float Volume)
