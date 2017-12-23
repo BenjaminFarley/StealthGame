@@ -25,6 +25,8 @@ void AFPSAIGuard::BeginPlay()
 	Super::BeginPlay();
 	
 	OriginalRotation = GetActorRotation();
+
+	SetGuardState(EAIState::IDLE);
 }
 
 // Called every frame
@@ -50,11 +52,13 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 		GM->CompleteMission(SeenPawn, false);
 	}
 
+	SetGuardState(EAIState::ALERTED);
+
 }
 
 void AFPSAIGuard::OnHearingNoise(APawn* NoiseInstigator, const FVector& Location, float Volume)
 {
-	if (NoiseInstigator == nullptr)
+	if (GuardState == EAIState::ALERTED)
 	{
 		return;
 	}
@@ -74,9 +78,31 @@ void AFPSAIGuard::OnHearingNoise(APawn* NoiseInstigator, const FVector& Location
 	
 	GetWorldTimerManager().SetTimer(TimeHandle_ResetRotation, this, &AFPSAIGuard::ResetRotation, 3.0f);
 
+	SetGuardState(EAIState::SUSPICIOUS);
+	
 }
 
 void AFPSAIGuard::ResetRotation()
 {
+	if (GuardState == EAIState::ALERTED)
+	{
+		return;
+	}
+
 	SetActorRotation(OriginalRotation);
+
+	SetGuardState(EAIState::IDLE);
 }
+
+void AFPSAIGuard::SetGuardState(EAIState NewState)
+{
+	if (GuardState == NewState)
+	{
+		return;
+	}
+
+	GuardState = NewState;
+
+	OnStateChange(NewState);
+}
+
