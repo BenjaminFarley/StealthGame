@@ -22,6 +22,7 @@ void AFPSAIGuard::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	OriginalRotation = GetActorRotation();
 }
 
 // Called every frame
@@ -48,5 +49,24 @@ void AFPSAIGuard::OnHearingNoise(APawn* NoiseInstigator, const FVector& Location
 		return;
 	}
 
-	DrawDebugSphere(GetWorld(), NoiseInstigator->GetActorLocation(), 32.0f, 12.0f, FColor::Blue, false, 10.0f);
+	DrawDebugSphere(GetWorld(), Location, 32.0f, 12.0f, FColor::Blue, false, 10.0f);
+
+	FVector Direction = Location - GetActorLocation();
+	Direction.Normalize();
+
+	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	NewRotation.Pitch = 0.0f;
+	NewRotation.Roll = 0.0f;
+
+	SetActorRotation(NewRotation);
+
+	GetWorldTimerManager().ClearTimer(TimeHandle_ResetRotation);
+	
+	GetWorldTimerManager().SetTimer(TimeHandle_ResetRotation, this, &AFPSAIGuard::ResetRotation, 3.0f);
+
+}
+
+void AFPSAIGuard::ResetRotation()
+{
+	SetActorRotation(OriginalRotation);
 }
